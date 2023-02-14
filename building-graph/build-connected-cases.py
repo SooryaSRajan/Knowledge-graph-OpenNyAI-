@@ -67,3 +67,8 @@ for name, group in grouped:
                         "r:RELATIONSHIP {relationship: $relationship}]->(b)", from_node=node, to_node=caseName,
                         case_id=caseId,
                         relationship=relationship)
+
+    with driver.session() as session:
+        session.run("MATCH (n:Node) WITH n.name AS name, COLLECT(n) AS nodes, COUNT(*) AS count "
+                    "WHERE count > 1 "
+                    "FOREACH (n IN tail(nodes) | DETACH DELETE n)")
