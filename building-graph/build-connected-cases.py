@@ -6,12 +6,17 @@ import networkx as nx
 with open('building-dataset/json/processed_data_mvd.json', 'r') as file:
     data = json.load(file)
 
-whichDriver = bool(input("Use local driver? (0 for no, 1 for yes): "))
-if whichDriver:
+whichDriver = input("Use local driver? (0 for no, 1 for yes): ")
+driver = None
+
+if whichDriver == '1':
     driver = GraphDatabase.driver(uri="bolt://localhost:7687", auth=("neo4j", "password"))
-else:
+elif whichDriver == '0':
     driver = GraphDatabase.driver(uri="neo4j+s://5bdc6a9f.databases.neo4j.io",
                                   auth=("neo4j", "jCgUToP_2Qe7UWfqDi8iGj4JCp6k_5I22MZQvflVUVA"))
+else:
+    print("Invalid input. Exiting.")
+    exit()
 
 with driver.session() as session:
     session.run("MATCH (n) DETACH DELETE n")
@@ -39,13 +44,15 @@ relationShipToCase = {'ORG': 'ORGANIZATION INVOLVED IN CASE',
                       }
 
 count = 0
+total = len(grouped)
+
 for name, group in grouped:
 
     group = group.sample(frac=1)
 
     G = nx.Graph()
-    print(count)
     count = count + 1
+    print("Processing case " + str(count) + " of " + str(total) + " cases.")
 
     for index, row in group.iterrows():
         normalizedName = row['normalized_name'].upper()
@@ -71,7 +78,6 @@ for name, group in grouped:
                 session.run("MATCH (n:Node {name: $name, type: $type}) SET n.case_id = apoc.coll.union(n.case_id, "
                             "$case_id)", name=node,
                             type=label, case_id=[caseId])
-
 
             relationship = relationShipToCase[label]
             if relationship is None:
