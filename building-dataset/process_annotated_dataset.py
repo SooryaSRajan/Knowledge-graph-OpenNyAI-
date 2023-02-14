@@ -1,6 +1,6 @@
 import json
 
-f = open('dataset_processed.json')
+f = open('json/dataset_processed.json')
 f = json.load(f)
 
 processed_results = []
@@ -29,5 +29,5 @@ for documents in f:
     print(entities)
 
 json_object = json.dumps(processed_results, indent=4)
-with open("combined_annotated_data_mvd.json", "w") as outfile:
+with open("json/combined_annotated_data_mvd.json", "w") as outfile:
     outfile.write(json_object)

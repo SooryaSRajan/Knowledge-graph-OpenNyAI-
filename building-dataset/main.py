@@ -2,7 +2,7 @@ import json
 from opennyai import Pipeline
 from opennyai.utils import Data
 
-f = open('docs_only_mvd_clean.json')
+f = open('json/docs_only_mvd_clean.json')
 f = json.load(f)
 
 processed_results = []
@@ -23,5 +23,5 @@ for i in f:
         continue
 
 json_object = json.dumps(processed_results, indent=4)
-with open("dataset_processed.json", "w") as outfile:
+with open("json/dataset_processed.json", "w") as outfile:
     outfile.write(json_object)

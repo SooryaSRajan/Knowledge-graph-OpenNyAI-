@@ -1,7 +1,7 @@
 import json
 
 # Load the annotated legal text
-with open('processed_data_mvd.json', 'r') as file:
+with open('json/processed_data_mvd.json', 'r') as file:
     data = json.load(file)
 
 #check how many normalised_names are the same between different objects

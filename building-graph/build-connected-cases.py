@@ -3,7 +3,7 @@ from neo4j import GraphDatabase
 import pandas as pd
 import networkx as nx
 
-with open('processed_data_mvd.json', 'r') as file:
+with open('../building-dataset/json/processed_data_mvd.json', 'r') as file:
     data = json.load(file)
 
 driver = GraphDatabase.driver(uri="bolt://localhost:7687", auth=("neo4j", "password"))

@@ -13,7 +13,7 @@ with driver.session() as session:
     print("Database cleared")
 
 # Read the annotated dataset
-with open('processed_data_mvd.json', 'r') as f:
+with open('../building-dataset/json/processed_data_mvd.json', 'r') as f:
     data = json.load(f)
     print("Data loaded")
 

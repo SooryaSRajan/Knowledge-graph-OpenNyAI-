@@ -1,11 +1,11 @@
 import json
 
-dataset = open('combined_annotated_data_mvd.json')
+dataset = open('json/combined_annotated_data_mvd.json')
 dataset = json.load(dataset)
 
 processed_results = []
 
-case_data = open('docs_only_mvd_clean.json')
+case_data = open('json/docs_only_mvd_clean.json')
 case_data = json.load(case_data)
 
 #get publishdate, title and docsource from the case_data for document_id of combined_annotated_data_mvd.json matching id in case_data
@@ -31,5 +31,5 @@ print(processed_results)
 
 json_object = json.dumps(processed_results, indent=4)
 # write to file
-with open("processed_data_mvd.json", "w") as outfile:
+with open("json/processed_data_mvd.json", "w") as outfile:
     outfile.write(json_object)

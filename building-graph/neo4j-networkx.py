@@ -3,7 +3,7 @@ import networkx as nx
 from neo4j import GraphDatabase
 
 # Load the annotated legal text
-with open('processed_data_mvd.json', 'r') as file:
+with open('../building-dataset/json/processed_data_mvd.json', 'r') as file:
     data = json.load(file)
 
 #shuffle data
