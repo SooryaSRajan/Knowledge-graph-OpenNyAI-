@@ -41,12 +41,13 @@ for i in all_ids:
     if i not in id_set:
         id_not_in_set.append(i)
 print(id_not_in_set)
+print()
+print("GENERATING QUERY TO MATCH MAXIMUM POSSIBLE NODES")
 print("QUERY: ")
 
-# generate MATCH query for the following document_id in id_set
-query = "MATCH (n) WHERE n.case_id IN ["
+query = "MATCH (n) WHERE ANY(case_id IN n.case_id WHERE case_id IN ["
 for i in id_set:
     query += str(i) + ", "
-
-query = query[:-2] + "] RETURN n"
+query = query[:-2]
+query += "]) RETURN n"
 print(query)

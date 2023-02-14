@@ -63,10 +63,15 @@ for name, group in grouped:
 
             if session.run("MATCH (n:Node {name: $name, type: $type}) RETURN n", name=node,
                            type=label).single() is None:
-                print("Creating node: " + node + " with label: " + label + " and case id: " + str(caseId))
 
                 session.run("CREATE (n:Node {name: $name, type: $type, case_id: $case_id})", name=node,
-                            type=label, case_id=caseId)
+                            type=label, case_id=[caseId])
+
+            else:
+                session.run("MATCH (n:Node {name: $name, type: $type}) SET n.case_id = apoc.coll.union(n.case_id, "
+                            "$case_id)", name=node,
+                            type=label, case_id=[caseId])
+
 
             relationship = relationShipToCase[label]
             if relationship is None:
@@ -78,3 +83,10 @@ for name, group in grouped:
                         "r:RELATIONSHIP {relationship: $relationship}]->(b)", from_node=node, to_node=caseName,
                         case_id=caseId,
                         relationship=relationship)
+
+"""
+Use the below query to find all nodes that are in case [case_id, case_id, case_id, ...
+MATCH (n)
+WHERE ANY(case_id IN n.case_id WHERE case_id IN [case_id, case_id, case_id, ... ]) 
+RETURN n
+"""
