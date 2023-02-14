@@ -60,8 +60,13 @@ for name, group in grouped:
         for node in G.nodes:
             label = G.nodes[node]['type']
             caseId = group.iloc[0]['document_id']
-            session.run("CREATE (n:Node {name: $name, type: $type, case_id: $case_id})", name=node,
-                        type=label, case_id=caseId)
+
+            if session.run("MATCH (n:Node {name: $name, type: $type}) RETURN n", name=node,
+                           type=label).single() is None:
+                print("Creating node: " + node + " with label: " + label + " and case id: " + str(caseId))
+
+                session.run("CREATE (n:Node {name: $name, type: $type, case_id: $case_id})", name=node,
+                            type=label, case_id=caseId)
 
             relationship = relationShipToCase[label]
             if relationship is None:
@@ -73,15 +78,3 @@ for name, group in grouped:
                         "r:RELATIONSHIP {relationship: $relationship}]->(b)", from_node=node, to_node=caseName,
                         case_id=caseId,
                         relationship=relationship)
-
-    with driver.session() as session:
-        # remove duplicate nodes
-        session.run("MATCH (n:Node) WITH n.name AS name, COLLECT(n) AS nodes, COUNT(*) AS count "
-                    "WHERE count > 1 "
-                    "CALL apoc.refactor.mergeNodes(nodes) YIELD node "
-                    "RETURN node")
-        # remove duplicate relationships from case to node
-        session.run("MATCH (n:Node)-[r:RELATIONSHIP]->(c:Case) WITH n, c, COLLECT(r) AS rels, COUNT(*) AS count "
-                    "WHERE count > 1 "
-                    "CALL apoc.refactor.mergeRelationships(rels) YIELD rel "
-                    "RETURN rel")
