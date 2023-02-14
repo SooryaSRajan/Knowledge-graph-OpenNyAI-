@@ -10,7 +10,8 @@ whichDriver = bool(input("Use local driver? (0 for no, 1 for yes): "))
 if whichDriver:
     driver = GraphDatabase.driver(uri="bolt://localhost:7687", auth=("neo4j", "password"))
 else:
-    driver = GraphDatabase.driver(uri="neo4j+s://5bdc6a9f.databases.neo4j.io", auth=("neo4j", "jCgUToP_2Qe7UWfqDi8iGj4JCp6k_5I22MZQvflVUVA"))
+    driver = GraphDatabase.driver(uri="neo4j+s://5bdc6a9f.databases.neo4j.io",
+                                  auth=("neo4j", "jCgUToP_2Qe7UWfqDi8iGj4JCp6k_5I22MZQvflVUVA"))
 
 with driver.session() as session:
     session.run("MATCH (n) DETACH DELETE n")
@@ -74,10 +75,7 @@ for name, group in grouped:
                         relationship=relationship)
 
     with driver.session() as session:
-        # there are multiple duplicate nodes with the same nodes and different connections
-        # so we need to remove the duplicates and combine all the connections into one node
-        # make sure connections to all nodes are preserved
-        #use yield and apoc.refactor.mergeNodes
+        # remove duplicate nodes
         session.run("MATCH (n:Node) WITH n.name AS name, COLLECT(n) AS nodes, COUNT(*) AS count "
                     "WHERE count > 1 "
                     "CALL apoc.refactor.mergeNodes(nodes) YIELD node "
@@ -87,11 +85,3 @@ for name, group in grouped:
                     "WHERE count > 1 "
                     "CALL apoc.refactor.mergeRelationships(rels) YIELD rel "
                     "RETURN rel")
-
-
-
-
-
-
-
-#jCgUToP_2Qe7UWfqDi8iGj4JCp6k_5I22MZQvflVUVA - database password
