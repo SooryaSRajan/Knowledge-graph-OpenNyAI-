@@ -42,10 +42,6 @@ for name, group in grouped:
     print(count)
     count = count + 1
 
-    #continue if not these document_id 8, 25, 43, 49, 17
-    if group.iloc[0]['document_id'] not in [8, 25, 43, 49, 17]:
-        continue
-
     for index, row in group.iterrows():
         G.add_node(row['normalized_name'], type=row['labels'])
 
