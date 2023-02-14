@@ -1,7 +1,7 @@
 import json
 
 # Load the annotated legal text
-with open('json/processed_data_mvd.json', 'r') as file:
+with open('building-dataset/json/processed_data_mvd.json', 'r') as file:
     data = json.load(file)
 
 #check how many normalised_names are the same between different objects
@@ -19,6 +19,18 @@ for i in data:
             normalised_names[i['normalized_name']]['count'] += 1
             normalised_names[i['normalized_name']]['document_id'].append(i['document_id'])
 
+id_set = set()
 for i in normalised_names:
-    if normalised_names[i]['count'] > 1:
+    if normalised_names[i]['count'] > 5:
         print(i, normalised_names[i])
+        for j in normalised_names[i]['document_id']:
+            id_set.add(j)
+
+print(id_set)
+#generate MATCH query for the following document_id in id_set
+query = "MATCH (n) WHERE n.case_id IN ["
+for i in id_set:
+    query += str(i) + ", "
+
+query = query[:-2] + "] RETURN n"
+print(query)
