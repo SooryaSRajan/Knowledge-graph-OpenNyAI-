@@ -8,6 +8,7 @@ jupyter = "*"
 networkx = "*"
 neo4j = "*"
 matplotlib = "*"
+selenium = "*"
 
 [dev-packages]
 
