@@ -5,6 +5,13 @@ from selenium import webdriver
 from bs4 import BeautifulSoup
 import re
 
+import sys
+sys.path.append('my/path/to/module/folder')
+
+#print path to module folder
+
+print(sys.path)
+
 option = webdriver.ChromeOptions()
 option.add_argument("start-maximized")
 option.add_argument("--window-size=1920x1080")
@@ -17,7 +24,7 @@ driver = webdriver.Chrome(service=Service(webdriver_manager.chrome.ChromeDriverM
                           desired_capabilities=caps)
 
 count = 0
-while count < 2:
+while count < 1:
     driver.get(
         'https://indiankanoon.org/search/?formInput=motor%20vehicle%20%20%20%20doctypes%3A%20judgments&pagenum=' + str(
             count))
@@ -37,7 +44,47 @@ while count < 2:
 
 print(doc_url)
 
-#write to file
-with open('doc_url.json', 'w') as f:
-    for item in doc_url:
-        f.write("%s " % item)
+driver.quit()
+
+for url in doc_url:
+
+    option = webdriver.ChromeOptions()
+    option.add_argument('--headless')
+    option.add_argument('--disable-gpu')  # Last I checked this was necessary.
+    driver = webdriver.Chrome(service=Service(webdriver_manager.chrome.ChromeDriverManager().install()), options=option, desired_capabilities=caps)
+    driver.get(url)
+
+    soup = BeautifulSoup(driver.page_source, 'html.parser')
+
+    data = {}
+
+    try:
+        title = soup.find('div', class_='doc_title').text
+    except:
+        title = ''
+    try:
+        author = soup.find('div', class_='doc_author').text
+    except:
+        author = ''
+
+    data['title'] = title
+    data['author'] = author
+
+    text = ''
+
+    for p in soup.find_all('p', id=re.compile('^p_')):
+        p_id = re.findall(r'\d+', p['id'])[0]
+        text += p.text
+
+    text = re.sub(r'[\n\t]', '', text)
+    text = re.sub(r'[\*#@$]', '', text)
+    text = re.sub(r'[\xa0]', '', text)
+
+    data['text'] = text
+    print(data)
+
+doc = []
+
+#write to JSON file
+with open('data.json', 'w') as outfile:
+    json.dump(doc, outfile)
