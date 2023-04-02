@@ -1,6 +1,9 @@
 import json
 from opennyai import Pipeline
 from opennyai.utils import Data
+import sys
+#print path
+print(sys.path)
 
 f = open('building-dataset/json/docs_only_mvd_clean.json')
 f = json.load(f)
